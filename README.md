@@ -1,3 +1,23 @@
+# Tienda Online API
+
+**Autor:** Xabier
+**Repositorio:** https://github.com/xabigh/xabiergh-devops-practica
+
+## Descripción
+
+API REST de una tienda online desarrollada en Python con FastAPI (Práctica 2). Permite gestionar usuarios, productos (genéricos, electrónicos y de ropa) y pedidos. El proyecto está contenerizado con Docker (Práctica 3).
+
+## Estructura del repositorio
+
+```
+.
+├── src/                # Código fuente de la aplicación (main.py, models, services, schemas.py, tests)
+├── Dockerfile          # Definición de la imagen
+├── .dockerignore       # Archivos excluidos al construir la imagen
+├── requirements.txt    # Dependencias
+└── README.md
+```
+
 ## Docker
 
 Requisitos: tener [Docker](https://www.docker.com/) instalado y en ejecución.
@@ -23,7 +43,7 @@ docker images xabiergh-devops-practica
 
 ### b) Ejecutar el contenedor
 
-Ejecución básica (se elimina al parar con `Ctrl+C`):
+Ejecución básica (el contenedor se elimina al pararlo con `Ctrl+C`):
 
 ```bash
 docker run --rm -p 8000:8000 xabiergh-devops-practica:1.0
@@ -38,7 +58,7 @@ docker stop tienda-api      # parar
 docker rm tienda-api        # eliminar
 ```
 
-Usando otro puerto del equipo (por ejemplo 9000, la API sigue en el 8000 dentro del contenedor):
+Usando otro puerto del equipo (por ejemplo 9000; la API sigue en el 8000 dentro del contenedor):
 
 ```bash
 docker run --rm -p 9000:8000 xabiergh-devops-practica:1.0
@@ -80,21 +100,54 @@ INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
 
 **4. Pasos de prueba**
 
-1. Listar usuarios (al inicio debe devolver la lista vacía o la inicial):
+1. Listar usuarios (al inicio debe devolver una lista vacía):
 
 ```bash
 curl http://localhost:8000/usuarios
 ```
 
-2. Crear un usuario desde `/docs`: abre `POST /usuarios`, pulsa **Try it out**, edita el JSON de ejemplo y pulsa **Execute**. Debe responder con el código `200` o `201` y el usuario creado.
-3. Repetir `GET /usuarios`: debe incluir el usuario creado.
-4. Crear un producto con `POST /productos` y comprobarlo con `GET /productos`.
-5. Crear un pedido con `POST /pedidos` usando los ids del usuario y del producto, y comprobarlo con `GET /usuarios/{cliente_id}/pedidos`.
-6. Probar un id inexistente, por ejemplo `curl -i http://localhost:8000/productos/9999`: debe devolver un error `404`.
-
-### Descargar la imagen publicada (pull)
+2. Crear un usuario:
 
 ```bash
-docker pull TU_USUARIO_DOCKERHUB/xabiergh-devops-practica:1.0
-docker run --rm -p 8000:8000 TU_USUARIO_DOCKERHUB/xabiergh-devops-practica:1.0
+curl -X POST http://localhost:8000/usuarios \
+  -H "Content-Type: application/json" \
+  -d '{"nombre": "Ana García", "email": "ana@mail.com", "tipo": "cliente", "direccion_postal": "Calle A"}'
 ```
+
+Respuesta esperada: código `201` y el usuario creado:
+
+```json
+{
+  "id": "a1e4ec9d-9c03-4613-96ed-2656406e2e64",
+  "nombre": "Ana García",
+  "email": "ana@mail.com",
+  "es_admin": false
+}
+```
+
+> El `id` es un UUID generado por la API, por lo que será distinto en cada ejecución.
+
+También se puede hacer desde `/docs`: `POST /usuarios` → **Try it out** → **Execute**.
+
+3. Repetir `GET /usuarios`: debe incluir a Ana García.
+4. Crear un producto con `POST /productos` y comprobarlo con `GET /productos`.
+5. Crear un pedido con `POST /pedidos` usando los ids del usuario y del producto, y comprobarlo con `GET /usuarios/{cliente_id}/pedidos`.
+6. Probar un id inexistente:
+
+```bash
+curl -i http://localhost:8000/productos/9999
+```
+
+Respuesta esperada: código `404`.
+
+## Descargar la imagen publicada (pull)
+
+```bash
+docker pull ghcr.io/xabigh/xabiergh-devops-practica:1.0
+docker run --rm -p 8000:8000 ghcr.io/xabigh/xabiergh-devops-practica:1.0
+```
+
+## Flujo de trabajo Git
+
+- `main`: rama principal, protegida; los cambios llegan solo mediante Pull Request.
+- `feature/docker`: contenerización de la aplicación (Dockerfile, `.dockerignore`, `requirements.txt` y documentación).
