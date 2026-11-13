@@ -1,0 +1,13 @@
+Práctica 3.2 - Xabier
+
+Repositorio:
+https://github.com/xabigh/xabiergh-devops-practica
+
+Historial de commits (rama main):
+https://github.com/xabigh/xabiergh-devops-practica/commits/main
+
+Ramas (main y feature/docker):
+https://github.com/xabigh/xabiergh-devops-practica/branches
+
+Pull Request registrado y mergeado:
+https://github.com/xabigh/xabiergh-devops-practica/pulls?q=is%3Apr+is%3Aclosed
